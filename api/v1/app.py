@@ -5,13 +5,13 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-# Create a CORS instance
 cors = CORS(app, resources={r"/api/*": {"origins": "0.0.0.0"}})
 
-# Define your API routes
 @app.route('/api/v1/cities/<city_id>', methods=['GET'])
 def get_city(city_id):
-    # Your code to retrieve city data
+    """
+    Retrieve city data by city ID.
+    """
     city_data = {
         "__class__": "City",
         "id": city_id,
