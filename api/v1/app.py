@@ -1,4 +1,4 @@
-#!/usr/bin/python3'
+#!/usr/bin/python3
 """ App Module """
 
 
@@ -9,24 +9,14 @@ from os import getenv
 from flask_cors import CORS
 
 app = Flask(__name__)
+
 app.register_blueprint(app_views)
-app.config.update(JSONIFY_PRETTYPRINT_REGULAR=True)
-cors = CORS(app, resources={"/*": {"origins": "0.0.0.0"}})
-
-
-@app.errorhandler(404)
-def not_found(e):
-    """ Returns a 404 error in JSON format """
-    return jsonify({"error": "Not found"}), 404
-
 
 @app.teardown_appcontext
-def teardown(close):
-    ''' Closes current storage session '''
+def teardown(exception):
     storage.close()
 
-
 if __name__ == "__main__":
-    hosts = getenv("HBNB_API_HOST", default='0.0.0.0')
-    ports = int(getenv("HBNB_API_PORT", default=5000))
-    app.run(host=hosts, port=ports, threaded=True)
+    host = os.getenv('HBNB_API_HOST', '0.0.0.0')
+    port = int(os.getenv('HBNB_API_PORT', 5000))
+    app.run(host=host, port=port, threaded=True)
