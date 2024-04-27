@@ -7,14 +7,11 @@ from models import storage
 
 @app_views.route('/status', methods=['GET'])
 def api_status():
-    response = jsonify({"status": "OK"})
-    response.status_code = 200
-    response.headers['Content-Type'] = 'application/json'
-    return response
+    return jsonify({"status": "OK"})
 
 @app_views.route('/stats', methods=['GET'])
 def get_stats():
-    counts = {
+    stats = {
         "amenities": storage.count(Amenity),
         "cities": storage.count(City),
         "places": storage.count(Place),
@@ -22,4 +19,4 @@ def get_stats():
         "states": storage.count(State),
         "users": storage.count(User)
     }
-    return jsonify(counts)
+    return jsonify(stats)
