@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 """
 Handles RESTful API actions for User objects.
+
+This module provides endpoints to perform CRUD (Create, Read, Update, Delete)
+operations on User objects through a RESTful API.
 """
 
 from flask import jsonify, request, abort
@@ -11,14 +14,28 @@ from models.user import User
 
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 def get_users():
-    """Retrieves the list of all User objects"""
+    """
+    Retrieves the list of all User objects.
+
+    Returns:
+        JSON response containing a list of dictionaries, each representing a User object.
+    """
     users = [user.to_dict() for user in storage.all(User).values()]
     return jsonify(users)
 
 
 @app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
 def get_user(user_id):
-    """Retrieves a User object"""
+    """
+    Retrieves a specific User object.
+
+    Args:
+        user_id (str): The ID of the User to retrieve.
+
+    Returns:
+        JSON response containing the dictionary representation of the User object.
+        If the User with the given ID does not exist, returns HTTP status code 404.
+    """
     user = storage.get(User, user_id)
     if user is None:
         abort(404)
@@ -27,7 +44,14 @@ def get_user(user_id):
     
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
 def create_user():
-    """Creates a User"""
+    """
+    Creates a new User object.
+
+    Returns:
+        JSON response containing the dictionary representation of the newly created User object.
+        If the request does not contain valid JSON data or the required 'email' or 'password' field is missing,
+        returns HTTP status code 400.
+    """
     data = request.get_json()
     if data is None:
         abort(400, 'Not a JSON')
@@ -42,7 +66,17 @@ def create_user():
             
 @app_views.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
 def update_user(user_id):
-    """Updates a User object"""
+    """
+    Updates an existing User object.
+    
+    Args:
+        user_id (str): The ID of the User to update.
+
+    Returns:
+        JSON response containing the dictionary representation of the updated User object.
+        If the User with the given ID does not exist or the request does not contain valid JSON data,
+        returns HTTP status code 404 or 400 respectively.
+    """
     user = storage.get(User, user_id)
     if user is None:
         abort(404)
@@ -56,10 +90,19 @@ def update_user(user_id):
                     user.save()
                     return jsonify(user.to_dict())
                 
-            
+                
 @app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
 def delete_user(user_id):
-    """Deletes a User object"""
+    """
+    Deletes an existing User object.
+    
+    Args:
+        user_id (str): The ID of the User to delete.
+
+    Returns:
+        Empty JSON response with HTTP status code 200 if successful.
+        If the User with the given ID does not exist, returns HTTP status code 404.
+    """
     user = storage.get(User, user_id)
     if user is None:
         abort(404)
