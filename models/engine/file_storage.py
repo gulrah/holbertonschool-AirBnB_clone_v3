@@ -19,7 +19,9 @@ classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
 class FileStorage:
     """serializes instances to a JSON file & deserializes back to instances"""
 
+    # string - path to the JSON file
     __file_path = "file.json"
+    # dictionary - empty but will store all objects by <class name>.id
     __objects = {}
 
     def all(self, cls=None):
@@ -63,35 +65,18 @@ class FileStorage:
             if key in self.__objects:
                 del self.__objects[key]
 
+    def get(self, cls, id):
+        """Retrieve one object"""
+        key = "{}.{}".format(cls.__name__, id)
+        return self.__objects.get(key, None)
+    
+    def count(self, cls=None):
+        """Count the number of objects in storage"""
+        if cls:
+            return len([obj for obj in self.__objects.values() if type(obj) == cls])
+        else:
+            return len(self.__objects)
+        
     def close(self):
         """call reload() method for deserializing the JSON file to objects"""
         self.reload()
-
-    def get(self, cls, id):
-        """Retrieves one object based on the class name and its ID
-        Attributes:
-            cls (string): string representing the class name
-            id (string): string representing the object ID
-        Return: the object, or None if not found
-        """
-        if cls is not None:
-            for key, value in self.__objects.items():
-                if cls == value.__class__ or cls == value.__class__.__name__:
-                    if value.id == id:
-                        return value
-        return None
-
-    def count(self, cls=None):
-        """Returns the number of objects in storage matching the given class
-        name. Returns count of all objects in storage if no class name given
-        Attributes:
-            cls (string): string representing the class name (optional)
-        Return: the number of objects in storage
-        """
-        count = 0
-        if cls is not None:
-            for key, value in self.__objects.items():
-                if cls == value.__class__ or cls == value.__class__.__name__:
-                    count += 1
-            return count
-        return (len(self.__objects))
