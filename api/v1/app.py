@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 """ App Module """
 
-
 from models import storage
 from api.v1.views import app_views
 from flask import Flask, Blueprint, jsonify, abort
 from os import getenv
 from flask_cors import CORS
+
 
 app = Flask(__name__)
 
