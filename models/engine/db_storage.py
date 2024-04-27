@@ -71,44 +71,18 @@ class DBStorage:
         Session = scoped_session(sess_factory)
         self.__session = Session
 
+    def get(self, cls, id):
+        """Retrieve one object"""
+        return self.__session.query(cls).get(id)
+    
+    def count(self, cls=None):
+        """Count the number of objects in storage"""
+        if cls:
+            return self.__session.query(cls).count()
+        else:
+            from models.base_model import BaseModel
+            return self.__session.query(BaseModel).count()
+
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
-
-    def get(self, cls, id):
-        """Retrieves one object based on the class name and its ID
-        Attributes:
-            cls (string): string representing the class name
-            id (string): string representing the object ID
-        Return: the object, or None if not found
-        """
-        for key in classes.keys():
-            if cls == key:
-                objs = self.__session.query(classes[key]).all()
-                for item in objs:
-                    # print(type(item))
-                    # print(item)
-                    if id == item.id:
-                        return item
-        return None
-
-    def count(self, cls=None):
-        """Returns the number of objects in storage matching the given class
-        name. Returns count of all objects in storage if no class name given
-        Attributes:
-            cls (string): string representing the class name (optional)
-        Return: the number of objects in storage
-        """
-        count = 0
-        if cls is not None:
-            for key in classes.keys():
-                if cls == key:
-                    objs = self.__session.query(classes[key]).all()
-                    for item in objs:
-                        count += 1
-        else:
-            for key in classes.keys():
-                objs = self.__session.query(classes[key]).all()
-                for item in objs:
-                    count += 1
-        return count
