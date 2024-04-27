@@ -12,7 +12,7 @@ def api_status():
 
 @app_views.route('/stats', methods=['GET'])
 def get_stats():
-    stats = {
+    counts = {
         "amenities": storage.count(Amenity),
         "cities": storage.count(City),
         "places": storage.count(Place),
@@ -20,4 +20,4 @@ def get_stats():
         "states": storage.count(State),
         "users": storage.count(User)
     }
-    return jsonify(stats)
+    return jsonify(counts)
