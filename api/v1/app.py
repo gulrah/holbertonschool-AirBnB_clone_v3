@@ -21,8 +21,8 @@ CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 def teardown(exception):
     """Closes session"""
     storage.close()
-
-
+    
+    
 @app.errorhandler(404)
 def errorhandler(error):
     """Returns a JSON-formated status code for errors"""

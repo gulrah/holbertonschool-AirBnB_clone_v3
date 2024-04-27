@@ -1,35 +1,36 @@
 #!/usr/bin/python3
-"""
-This script defines a Flask API to retrieve city data by city ID.
-"""
+""" Index Module """
 
-from flask import Flask, jsonify
-from flask_cors import CORS
 
-app = Flask(__name__)
+from api.v1.views import app_views
+from flask import jsonify
+from models import storage
+from models.amenity import Amenity
+from models.base_model import BaseModel
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 
-cors = CORS(app, resources={r"/api/*": {"origins": "0.0.0.0"}})
+classes = {"Amenity": Amenity, "City": City, "Place": Place,
+                      "Review": Review, "State": State, "User": User}
+plurals = {"amenities": Amenity, "cities": City, "places": Place,
+                      "reviews": Review, "states": State, "users": User}
 
-@app.route('/api/v1/cities/<city_id>', methods=['GET'])
-def get_city(city_id):
-    """
-    Retrieve city data by city ID.
 
-    Args:
-        city_id (str): The unique identifier of the city.
+@app_views.route("/status")
+def get_status():
+    """ Returns a status in JSON format """
+    return jsonify({"status": "OK"})
 
-    Returns:
-        JSON: A JSON response containing the city data.
-    """
-    city_data = {
-        "__class__": "City",
-        "id": city_id,
-        "name": "New Orleans",
-        "state_id": "2b9a4627-8a9e-4f32-a752-9a84fa7f4efd",
-        "created_at": "2017-03-25T02:17:06",
-        "updated_at": "2017-03-25T02:17:06"
-    }
-    return jsonify(city_data)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+@app_views.route("/stats")
+def num_of_objs():
+    """ Retrieves the number of each object by type """
+    totals = {}
+    for key, value in classes.items():
+        for k, v in plurals.items():
+            if value == v:
+                totals[k] = storage.count(key)
+                return jsonify(totals)
