@@ -7,7 +7,10 @@ from models import storage
 
 @app_views.route('/status', methods=['GET'])
 def api_status():
-    return jsonify({"status": "OK"})
+    response = jsonify({"status": "OK"})
+    response.status_code = 200
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 @app_views.route('/stats', methods=['GET'])
 def get_stats():
