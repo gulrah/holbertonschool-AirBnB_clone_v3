@@ -66,18 +66,19 @@ test_db_storage.py'])
                              "{:s} method needs a docstring".format(func[0]))
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
+
     def test_get(self):
         """Test get method"""
         new_state = State()
         new_state.save()
         state_id = new_state.id
         self.assertEqual(storage.get(State, state_id), new_state)
-        
+
     def test_count(self):
         """Test count method"""
         self.assertEqual(storage.count(), 7)
         self.assertEqual(storage.count(State), 1)
-        
+
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
