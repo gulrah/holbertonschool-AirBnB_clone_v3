@@ -2,7 +2,7 @@
 """
 Contains the TestFileStorageDocs classes
 """
-
+from models import storage
 from datetime import datetime
 import inspect
 import models
