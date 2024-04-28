@@ -7,19 +7,26 @@ from models import storage
 from models.base_model import BaseModel
 from models.review import Review
 from models.place import Place
+from models.user import User
 
 
 @app_views.route('/places/<place_id>/reviews', methods=['GET'], strict_slashes=False)
 def get_reviews(place_id):
+    """Get all reviews of a place"""
     place = storage.get(Place, place_id)
     if not place:
         abort(404)
+
+    if not place.reviews:
+        return jsonify([])  # Return an empty list if there are no reviews
+
     reviews = [review.to_dict() for review in place.reviews]
     return jsonify(reviews)
 
 
 @app_views.route('/reviews/<review_id>', methods=['GET'], strict_slashes=False)
 def get_review(review_id):
+    """Get a review by its ID"""
     review = storage.get(Review, review_id)
     if not review:
         abort(404)
@@ -28,6 +35,7 @@ def get_review(review_id):
 
 @app_views.route('/reviews/<review_id>', methods=['DELETE'], strict_slashes=False)
 def delete_review(review_id):
+    """Delete a review by its ID"""
     review = storage.get(Review, review_id)
     if not review:
         abort(404)
@@ -38,6 +46,7 @@ def delete_review(review_id):
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'], strict_slashes=False)
 def create_review(place_id):
+    """Create a new review for a place"""
     place = storage.get(Place, place_id)
     if not place:
         abort(404)
@@ -48,10 +57,6 @@ def create_review(place_id):
         abort(400, 'Missing user_id')
     if 'text' not in data:
         abort(400, 'Missing text')
-    user_id = data['user_id']
-    user = storage.get(User, user_id)
-    if not user:
-        abort(404, 'User not found')
     data['place_id'] = place_id
     review = Review(**data)
     storage.new(review)
@@ -61,6 +66,7 @@ def create_review(place_id):
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'], strict_slashes=False)
 def update_review(review_id):
+    """Update a review by its ID"""
     review = storage.get(Review, review_id)
     if not review:
         abort(404)
@@ -73,3 +79,6 @@ def update_review(review_id):
             setattr(review, key, value)
     storage.save()
     return jsonify(review.to_dict()), 200
+
+if __name__ == "__main__":
+    pass
